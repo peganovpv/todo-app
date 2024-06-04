@@ -1,115 +1,116 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import { auth, db } from '../../config/firebase';
+import { useNavigate } from 'react-router-dom';
+
+import { auth } from '../../config/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { set, ref } from 'firebase/database';
 
-import { Grid, Container, Typography, TextField, Button, Modal } from '@mui/material';
-import { Email, Lock, Person } from '@mui/icons-material';
-
-import LoadingScreen from '../../Components/LoadingScreen';
+import {
+    Container,
+    Typography,
+    TextField,
+    Button,
+    Card,
+    CardContent,
+    InputAdornment
+} from '@mui/material';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import PersonIcon from '@mui/icons-material/Person';
 
 function Register() {
-
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    const [open, setOpen] = useState(false);
-
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const register = async () => {
         setLoading(true);
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            await set(ref(db, `${user.uid}`), {
-                name: name,
-                email: email,
-            });
+            await createUserWithEmailAndPassword(auth, email, password);
+            navigate('/');
         } catch (error) {
-            console.error(error);
             setError(error.message);
+            console.error(error);
         } finally {
             setLoading(false);
         }
-    }
-
-    if(loading){
-        return <LoadingScreen />
-    }
+    };
 
     return (
-        <>
-        <Modal 
-            open={open}
-            onClose={() => setOpen(false)}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >   
-            {!error && 
-            <Grid container>
-                <Typography variant="h4">
-                    Account created successfully!
-                </Typography>
-                <Button variant="contained" color="primary" href="/login">
-                    Login
-                </Button>
-            </Grid>}
-            {error && 
-            <Grid container>
-                <Typography variant="h4" color="error">
-                    Error!
-                </Typography>
-                <Typography variant="body1" color="error">
-                    {error}
-                </Typography>
-                <Button variant="contained" color="primary" onClick={() => setOpen(false)}>
-                    Close
-                </Button>
-            </Grid>
-            }
-        </Modal>
-        <Container>
-            <div>
-                <Typography variant="h4">
-                    Register
-                </Typography>
-                <form>
-                    <TextField
-                        label="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        InputProps={{
-                            startAdornment: <Person />,
-                        }}
-                    />
-                    <TextField
-                        label="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        InputProps={{
-                            startAdornment: <Email />,
-                        }}
-                    />
-                    <TextField
-                        label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        InputProps={{
-                            startAdornment: <Lock />,
-                        }}
-                    />
-                    <Button variant="contained" color="primary" onClick={register}>
+        <Container component="main" maxWidth="xs">
+            <Card>
+                <CardContent>
+                    <Typography variant="h4" component="h1" gutterBottom>
                         Register
-                    </Button>
-                </form>
-            </div>
+                    </Typography>
+                    <form>
+                        <TextField
+                            label="Name"
+                            variant="outlined"
+                            fullWidth
+                            margin="normal"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            autoComplete="name"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <TextField
+                            label="Email"
+                            variant="outlined"
+                            fullWidth
+                            margin="normal"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete="email"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <EmailIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        <TextField
+                            label="Password"
+                            variant="outlined"
+                            type="password"
+                            fullWidth
+                            margin="normal"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            autoComplete="new-password"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <LockIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                        {error && <Typography color="error">{error}</Typography>}
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            onClick={register}
+                            disabled={loading || !email || !password || !name}
+                        >
+                            Register
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
         </Container>
-        </>
     );
 }
 

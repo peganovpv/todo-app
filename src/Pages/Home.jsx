@@ -1,31 +1,24 @@
 import React from 'react';
 
-import { auth } from '../config/firebase';
+import { useAuth } from '../config/AuthContext'; 
 
 import { Container, Typography, Button } from '@mui/material';
 
-const checkIfUserIsAuthenticated = () => {
-    if(auth.currentUser){
-        return true;
-    } else {
-        return false;
-    }
-};
-
 const Home = () => {
 
+    const { isAuthenticated } = useAuth();
+
     return (
-        <Container >
-            <div>
-                <Typography variant="h4" >
-                    Welcome to the TODO App!
-                </Typography>
-                {checkIfUserIsAuthenticated() ? (
-                    <Button variant="contained" color="primary" href="/todo">
-                        Go to TODO App
-                    </Button>
-                ) : (
-                    <>
+        <Container>
+            <Typography variant="h4">
+                Welcome to the TODO App!
+            </Typography>
+            {isAuthenticated ? (
+                <Button variant="contained" color="primary" href="/todo">
+                    Go to TODO App
+                </Button>
+            ) : (
+                <>
                     <Typography variant="body1">
                         You are not authenticated! Please login to access the TODO App.
                     </Typography>
@@ -34,11 +27,9 @@ const Home = () => {
                     </Button>
                     <Button variant="contained" color="primary" href="/register">
                         Register
-                    </Button>   
-                    </>
-                )
-                    }
-            </div>
+                    </Button>
+                </>
+            )}
         </Container>
     );
 };
