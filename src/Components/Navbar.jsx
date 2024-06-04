@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Link as RouterLink } from 'react-router-dom';
+
+import { auth } from '../config/firebase';
+import { signOut } from 'firebase/auth';
 
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,11 +18,13 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
-import { useAuth } from '../config/AuthContext';
-
 const Navbar = () => {
 
-    const { isAuthenticated, logout } = useAuth();
+    const [isAuthenticated, setIsAuthenticated] = useState();
+
+    useEffect(() => {
+        setIsAuthenticated(auth.currentUser !== null);
+    }, [auth.currentUser]);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -36,8 +41,8 @@ const Navbar = () => {
                     <ListItemText primary="Home" />
                 </ListItem>
                 {isAuthenticated ? (
-                    <ListItem button onClick={logout}>
-                        <ListItemText primary="Logout" />
+                    <ListItem button onClick={signOut(auth)}>
+                        <ListItemText primary="signOut" />
                     </ListItem>
                 ) : (
                     <>
@@ -78,7 +83,7 @@ const Navbar = () => {
                             Home
                         </Button>
                         {isAuthenticated ? (
-                            <Button color="inherit" onClick={logout}>
+                            <Button color="inherit" onClick={signOut}>
                                 Logout
                             </Button>
                         ) : (
