@@ -7,6 +7,9 @@ import { Container, Typography, TextField, Button } from '@mui/material';
 
 function Todo() {
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const [todos, setTodos] = useState([]);
     const [todo, setTodo] = useState('');
 
@@ -21,89 +24,67 @@ function Todo() {
         });
     }, []);
 
-    const addTodo = () => {
-        const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
-        const newTodo = {
-            id: todos.length,
-            text: todo,
-            completed: false,
-        };
-        update(todosRef, [...todos, newTodo]);
-        setTodo('');
+    const addTodo = async () => {
+        setLoading(true)
+        try{
+            const newTodo = {
+                id: todos.length + 1,
+                text: todo,
+                completed: false,
+                createAt: new Date().toISOString()
+            };
+            const newTodos = [...todos, newTodo];
+            const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
+            await update(todosRef, newTodos);
+            setTodos(newTodos);
+            setTodo('');
+        } catch (error) {
+            setError(error.message);
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    const toggleTodo = (id) => {
-        const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
-        const updatedTodos = todos.map((todo) => {
-            if (todo.id === id) {
-                return {
-                    ...todo,
-                    completed: !todo.completed,
-                };
-            }
-            return todo;
-        });
-        update(todosRef, updatedTodos);
+    const deleteTodo = async (id) => {
+        setLoading(true);
+        try {
+            const newTodos = todos.filter(todo => todo.id !== id);
+            const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
+            await update(todosRef, newTodos);
+            setTodos(newTodos);
+        } catch (error) {
+            setError(error.message);
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    const deleteTodo = (id) => {
-        const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
-        const updatedTodos = todos.filter((todo) => todo.id !== id);
-        update(todosRef, updatedTodos);
+    const toggleTodo = async (id) => {
+        setLoading(true);
+        try {
+            const newTodos = todos.map(todo => {
+                if(todo.id === id){
+                    return {
+                        ...todo,
+                        completed: !todo.completed
+                    }
+                }
+                return todo;
+            });
+            const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
+            await update(todosRef, newTodos);
+            setTodos(newTodos);
+        } catch (error) {
+            setError(error.message);
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    return (
-        <Container>
-            <div>
-                <Typography variant="h4">
-                    My Todos
-                </Typography>
-                <form >
-                    <TextField
-                        label="Add a new todo"
-                        variant="outlined"
-                        value={todo}
-                        onChange={(e) => setTodo(e.target.value)}
-                    />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={addTodo}
-                    >
-                        Add Todo
-                    </Button>
-                </form>
-                <ul>
-                    {todos.map((todo) => (
-                        <li key={todo.id}>
-                            <Typography
-                                style={{
-                                    textDecoration: todo.completed ? 'line-through' : 'none',
-                                }}
-                            >
-                                {todo.text}
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => toggleTodo(todo.id)}
-                            >
-                                Toggle
-                            </Button>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                onClick={() => deleteTodo(todo.id)}
-                            >
-                                Delete
-                            </Button>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </Container>
-    );
-
+    return(<></>)
 }
 
 export default Todo;
