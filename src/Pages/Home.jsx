@@ -1,14 +1,19 @@
-import React from 'react';
-
-import { useAuth } from '../config/AuthContext'; 
+import React, { useEffect, useState } from 'react';
 
 import { Container, Typography, Button } from '@mui/material';
 
 import Navbar from '../Components/Navbar';
+import { auth } from '../config/firebase';
 
 const Home = () => {
 
-    const { isAuthenticated } = useAuth();
+    const user = auth.currentUser;
+
+    const [isAuthenticated, setIsAuthenticated] = useState();
+
+    useEffect(() => {
+        setIsAuthenticated(user !== null);
+    }, [user]);
 
     return (
         <>
