@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../config/firebase';
 import { get, ref, update } from 'firebase/database';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { Container, Typography, TextField, Button, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -33,7 +35,7 @@ function Todo() {
     const handleAddTodo = async () => {
         setLoading(true);
         try {
-            const newTodo = { id: todos.length + 1, text: todo, completed: false, createdAt: new Date().toISOString() };
+            const newTodo = { id: uuidv4(), text: todo, completed: false, createdAt: new Date().toISOString() };
             const newTodos = [...todos, newTodo];
             const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
             await update(todosRef, { ...newTodos });
@@ -94,6 +96,7 @@ function Todo() {
                 Add Todo
             </Button>
             {loading && <CircularProgress />}
+            {todos.length === 0 && <Typography variant="body1">No todos found!</Typography>}
             <List>
                 {todos.map((item) => (
                     <ListItem key={item.id} secondaryAction={
