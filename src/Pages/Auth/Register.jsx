@@ -18,13 +18,19 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
 
+import Navbar from '../../Components/Navbar';
+import LoadingScreen from '../../Components/LoadingScreen';
+
 function Register() {
+
     const navigate = useNavigate();
+
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
 
     const register = async () => {
         setLoading(true);
@@ -39,7 +45,13 @@ function Register() {
         }
     };
 
+    if (loading) {
+        return <LoadingScreen />;
+    }
+
     return (
+        <>
+        <Navbar />
         <Container component="main" maxWidth="xs">
             <Card>
                 <CardContent>
@@ -111,6 +123,7 @@ function Register() {
                 </CardContent>
             </Card>
         </Container>
+        </>
     );
 }
 

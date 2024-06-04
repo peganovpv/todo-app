@@ -4,11 +4,15 @@ import { useAuth } from '../config/AuthContext';
 
 import { Container, Typography, Button } from '@mui/material';
 
+import Navbar from '../Components/Navbar';
+
 const Home = () => {
 
     const { isAuthenticated } = useAuth();
 
     return (
+        <>
+        <Navbar />
         <Container>
             <Typography variant="h4">
                 Welcome to the TODO App!
@@ -31,6 +35,7 @@ const Home = () => {
                 </>
             )}
         </Container>
+        </>
     );
 };
 

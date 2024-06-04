@@ -7,10 +7,16 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { Container, Typography, TextField, Button, Card, CardContent } from '@mui/material';
 
+import Navbar from '../../Components/Navbar';
+import LoadingScreen from '../../Components/LoadingScreen';
+
 function Login() {
+
     const navigate = useNavigate();
+
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -27,7 +33,13 @@ function Login() {
         }
     };
 
+    if (loading) {
+        return <LoadingScreen />;
+    }
+
     return (
+        <>
+        <Navbar />
         <Container component="main" maxWidth="xs">
             <Card>
                 <CardContent>
@@ -69,6 +81,7 @@ function Login() {
                 </CardContent>
             </Card>
         </Container>
+        </>
     );
 }
 

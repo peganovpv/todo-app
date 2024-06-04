@@ -9,6 +9,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CircularProgress from '@mui/material/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 
+import Navbar from '../Components/Navbar';
+
 function Todo() {
 
     const [loading, setLoading] = useState(false);
@@ -76,6 +78,8 @@ function Todo() {
     };
 
     return (
+        <>
+        <Navbar />
         <Container>
             <Typography variant="h4">Your Todos</Typography>
             <TextField
@@ -108,6 +112,7 @@ function Todo() {
             </List>
             {error && <Snackbar open={true} autoHideDuration={6000} message={error} />}
         </Container>
+        </>
     );
 }
 
