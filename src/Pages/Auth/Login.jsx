@@ -13,16 +13,19 @@ function Login() {
 
     const navigate = useNavigate();
 
+    const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const login = async () => {
         setLoading(true);
         try {
-            await auth.signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password);
             navigate('/');
         } catch (error) {
+            setError(error.message);
             console.error(error);
         }
         setLoading(false);
@@ -51,6 +54,7 @@ function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        {error && <Typography color="error">{error}</Typography>}
                         <Button
                             variant="contained"
                             color="primary"
