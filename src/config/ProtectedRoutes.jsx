@@ -8,7 +8,7 @@ export const ProtectedRoutes = ({ children }) => {
 
   if (loading) return <LoadingScreen />;
 
-  if (!user) return <Navigate to="/no-access" />;
+  if (!user) return <Navigate to="/" />;
 
   return <>{children}</>;
 }
