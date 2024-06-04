@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 import { auth } from '../../config/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { Container, Typography, TextField, Button } from '@mui/material';
 
@@ -19,7 +20,7 @@ function Login() {
     const login = async () => {
         setLoading(true);
         try {
-            await auth.signInWithEmailAndPassword(email, password);
+            await auth.signInWithEmailAndPassword(auth, email, password);
             navigate('/');
         } catch (error) {
             console.error(error);
