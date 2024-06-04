@@ -2,22 +2,7 @@ import React from 'react';
 
 import { auth } from '../config/firebase';
 
-import { makeStyles } from '@mui/styles';
 import { Container, Typography, Button } from '@mui/material';
-
-import Todo from './Todo';
-
-const useStyles = makeStyles((theme) => ({
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-    },
-    title: {
-        marginBottom: theme.spacing(4),
-    },
-}));
 
 const checkIfUserIsAuthenticated = () => {
     if(auth.currentUser){
@@ -28,16 +13,17 @@ const checkIfUserIsAuthenticated = () => {
 };
 
 const Home = () => {
-    const classes = useStyles();
 
     return (
-        <Container className={classes.container}>
+        <Container >
             <div>
-                <Typography variant="h4" className={classes.title}>
+                <Typography variant="h4" >
                     Welcome to the TODO App!
                 </Typography>
                 {checkIfUserIsAuthenticated() ? (
-                    <Todo />
+                    <Button variant="contained" color="primary" href="/todo">
+                        Go to TODO App
+                    </Button>
                 ) : (
                     <>
                     <Typography variant="body1">
@@ -45,6 +31,9 @@ const Home = () => {
                     </Typography>
                     <Button variant="contained" color="primary" href="/login">
                         Login
+                    </Button>
+                    <Button variant="contained" color="primary" href="/register">
+                        Register
                     </Button>
                     </>
                 )

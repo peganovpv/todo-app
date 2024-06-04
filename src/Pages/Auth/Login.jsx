@@ -2,33 +2,14 @@ import React, { useState } from 'react'
 
 import { useNavigate } from 'react-router-dom';
 
-import { auth,db } from '../../config/firebase';
+import { auth } from '../../config/firebase';
 
-import { makeStyles } from '@mui/styles';
 import { Container, Typography, TextField, Button } from '@mui/material';
 
 import LoadingScreen from '../../Components/LoadingScreen';
 
-const useStyles = makeStyles((theme) => ({
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: theme.spacing(2),
-    },
-    title: {
-        marginBottom: theme.spacing(4),
-    },
-}));
-
 function Login() {
 
-    const classes = useStyles();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
@@ -47,15 +28,15 @@ function Login() {
     }
 
     return (
-        <Container className={classes.container}>
+        <Container >
             {loading ? (
                 <LoadingScreen />
             ) : (
                 <div>
-                    <Typography variant="h4" className={classes.title}>
+                    <Typography variant="h4" >
                         Login
                     </Typography>
-                    <form className={classes.form}>
+                    <form>
                         <TextField
                             label="Email"
                             variant="outlined"
@@ -85,5 +66,3 @@ function Login() {
 }
 
 export default Login;
-
-

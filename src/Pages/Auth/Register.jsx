@@ -4,30 +4,10 @@ import { auth, db } from '../../config/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { set, ref } from 'firebase/database';
 
-import { makeStyles } from '@mui/styles';
 import { Container, Typography, TextField, Button } from '@mui/material';
-import { EmailIcon, LockIcon, PersonIcon } from '@mui/icons-material';
-
-const useStyles = makeStyles((theme) => ({
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: theme.spacing(2),
-    },
-    title: {
-        marginBottom: theme.spacing(4),
-    },
-}));
+import { Email, Lock, Person } from '@mui/icons-material';
 
 function Register() {
-
-    const classes = useStyles();
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -47,18 +27,18 @@ function Register() {
     }
 
     return (
-        <Container className={classes.container}>
+        <Container>
             <div>
-                <Typography variant="h4" className={classes.title}>
+                <Typography variant="h4">
                     Register
                 </Typography>
-                <form className={classes.form}>
+                <form>
                     <TextField
                         label="Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         InputProps={{
-                            startAdornment: <PersonIcon />,
+                            startAdornment: <Person />,
                         }}
                     />
                     <TextField
@@ -66,7 +46,7 @@ function Register() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         InputProps={{
-                            startAdornment: <EmailIcon />,
+                            startAdornment: <Email />,
                         }}
                     />
                     <TextField
@@ -75,7 +55,7 @@ function Register() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         InputProps={{
-                            startAdornment: <LockIcon />,
+                            startAdornment: <Lock />,
                         }}
                     />
                     <Button variant="contained" color="primary" onClick={register}>

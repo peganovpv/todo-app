@@ -3,29 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../config/firebase';
 import { get, ref, update } from 'firebase/database';
 
-import { makeStyles } from '@mui/styles';
 import { Container, Typography, TextField, Button } from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: theme.spacing(2),
-    },
-    title: {
-        marginBottom: theme.spacing(4),
-    },
-}));
-
 function Todo() {
-
-    const classes = useStyles();
 
     const [todos, setTodos] = useState([]);
     const [todo, setTodo] = useState('');
@@ -73,12 +53,12 @@ function Todo() {
     }
 
     return (
-        <Container className={classes.container}>
+        <Container>
             <div>
-                <Typography variant="h4" className={classes.title}>
+                <Typography variant="h4">
                     My Todos
                 </Typography>
-                <form className={classes.form}>
+                <form >
                     <TextField
                         label="Add a new todo"
                         variant="outlined"
@@ -125,3 +105,5 @@ function Todo() {
     );
 
 }
+
+export default Todo;
