@@ -34,7 +34,7 @@ const Home = () => {
                     </Button>
                     <Button variant="contained" color="primary" href="/register">
                         Register
-                    </Button>
+                    </Button>   
                     </>
                 )
                     }
