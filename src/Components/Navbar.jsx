@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery'
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -28,33 +28,43 @@ const Navbar = () => {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
+    const handleSignOut = () => {
+        signOut(auth).then(() => {
+            // Handle successful sign out here (optional)
+            setIsAuthenticated(false);
+        }).catch((error) => {
+            // Handle sign out errors here (optional)
+            console.error("Sign out error:", error);
+        });
+    };
+
     const drawer = (
         <div>
             <List>
-                <ListItem component={RouterLink} to="/">
+                <ListItem button component={RouterLink} to="/">
                     <ListItemText primary="Home" />
                 </ListItem>
                 {isAuthenticated ? (
-                    <ListItem onClick={() => signOut(auth)}>
-                        <ListItemText primary="signOut" />
+                    <ListItem button onClick={handleSignOut}>
+                        <ListItemText primary="Logout" />
                     </ListItem>
                 ) : (
                     <>
-                        <ListItem component={RouterLink} to="/login">
+                        <ListItem button component={RouterLink} to="/login">
                             <ListItemText primary="Login" />
                         </ListItem>
-                        <ListItem component={RouterLink} to="/register">
+                        <ListItem button component={RouterLink} to="/register">
                             <ListItemText primary="Register" />
                         </ListItem>
                     </>
                 )}
-                <ListItem component={RouterLink} to="/todo">
+                <ListItem button component={RouterLink} to="/todo">
                     <ListItemText primary="Todo" />
                 </ListItem>
             </List>
@@ -83,7 +93,7 @@ const Navbar = () => {
                             Home
                         </Button>
                         {isAuthenticated ? (
-                            <Button color="inherit" onClick={() => signOut}>
+                            <Button color="inherit" onClick={handleSignOut}>
                                 Logout
                             </Button>
                         ) : (
