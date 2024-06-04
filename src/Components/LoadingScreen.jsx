@@ -8,9 +8,9 @@ function LoadingScreen() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '100vh',  // Full view height to center vertically in the viewport
-                width: '100vw',   // Full view width to center horizontally in the viewport
-                backgroundColor: 'rgba(0, 0, 0, 0.1)'  // Optional: Screen dimming
+                height: '100vh',  
+                width: '100vw',   
+                backgroundColor: 'rgba(0, 0, 0, 0.1)'  
             }}
         >
             <CircularProgress />
