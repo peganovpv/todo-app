@@ -37,24 +37,24 @@ const Navbar = () => {
     const drawer = (
         <div>
             <List>
-                <ListItem button component={RouterLink} to="/">
+                <ListItem component={RouterLink} to="/">
                     <ListItemText primary="Home" />
                 </ListItem>
                 {isAuthenticated ? (
-                    <ListItem button onClick={signOut(auth)}>
+                    <ListItem onClick={() => signOut(auth)}>
                         <ListItemText primary="signOut" />
                     </ListItem>
                 ) : (
                     <>
-                        <ListItem button component={RouterLink} to="/login">
+                        <ListItem component={RouterLink} to="/login">
                             <ListItemText primary="Login" />
                         </ListItem>
-                        <ListItem button component={RouterLink} to="/register">
+                        <ListItem component={RouterLink} to="/register">
                             <ListItemText primary="Register" />
                         </ListItem>
                     </>
                 )}
-                <ListItem button component={RouterLink} to="/todo">
+                <ListItem component={RouterLink} to="/todo">
                     <ListItemText primary="Todo" />
                 </ListItem>
             </List>
@@ -83,7 +83,7 @@ const Navbar = () => {
                             Home
                         </Button>
                         {isAuthenticated ? (
-                            <Button color="inherit" onClick={signOut}>
+                            <Button color="inherit" onClick={() => signOut}>
                                 Logout
                             </Button>
                         ) : (

@@ -5,19 +5,15 @@ import { get, ref, update } from 'firebase/database';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { Container, Typography, TextField, Button, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Container, Typography, TextField, Button, List, ListItem, ListItemText, IconButton, Card, CardContent, Box, CircularProgress, Snackbar } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import CircularProgress from '@mui/material/CircularProgress';
-import Snackbar from '@mui/material/Snackbar';
 
 import Navbar from '../Components/Navbar';
 
 function Todo() {
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const [todos, setTodos] = useState([]);
     const [todo, setTodo] = useState('');
 
@@ -81,40 +77,53 @@ function Todo() {
 
     return (
         <>
-        <Navbar />
-        <Container>
-            <Typography variant="h4">Your Todos</Typography>
-            <TextField
-                label="Add new todo"
-                variant="outlined"
-                fullWidth
-                value={todo}
-                onChange={e => setTodo(e.target.value)}
-                margin="normal"
-            />
-            <Button variant="contained" color="primary" onClick={handleAddTodo} disabled={!todo}>
-                Add Todo
-            </Button>
-            {loading && <CircularProgress />}
-            {todos.length === 0 && <Typography variant="body1">No todos found!</Typography>}
-            <List>
-                {todos.map((item) => (
-                    <ListItem key={item.id} secondaryAction={
-                        <>
-                            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteTodo(item.id)}>
-                                <DeleteIcon />
-                            </IconButton>
-                            <IconButton edge="end" aria-label="complete" onClick={() => handleToggleTodo(item.id)}>
-                                <CheckCircleOutlineIcon color={item.completed ? 'primary' : 'default'} />
-                            </IconButton>
-                        </>
-                    }>
-                        <ListItemText primary={item.text} style={{ textDecoration: item.completed ? 'line-through' : 'none' }} />
-                    </ListItem>
-                ))}
-            </List>
-            {error && <Snackbar open={true} autoHideDuration={6000} message={error} />}
-        </Container>
+            <Navbar />
+            <Container sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <Card sx={{ mb: 2, width: '100%', maxWidth: 600, boxShadow: 3 }}>
+                    <CardContent>
+                        <Typography variant="h4" gutterBottom>
+                            Add New Todo
+                        </Typography>
+                        <TextField
+                            label="Add new todo"
+                            variant="outlined"
+                            fullWidth
+                            value={todo}
+                            onChange={e => setTodo(e.target.value)}
+                            margin="normal"
+                        />
+                        <Button variant="contained" color="primary" onClick={handleAddTodo} disabled={!todo}>
+                            Add Todo
+                        </Button>
+                    </CardContent>
+                </Card>
+                {loading && <CircularProgress />}
+                <Card sx={{ width: '100%', maxWidth: 600, boxShadow: 3 }}>
+                    <CardContent>
+                        <Typography variant="h4" gutterBottom>
+                            Your Todos
+                        </Typography>
+                        {todos.length === 0 && <Typography variant="body2">No todos found!</Typography>}
+                        <List>
+                            {todos.map((item) => (
+                                <ListItem key={item.id} secondaryAction={
+                                    <>
+                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteTodo(item.id)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                        <IconButton edge="end" aria-label="complete" onClick={() => handleToggleTodo(item.id)}>
+                                            <CheckCircleOutlineIcon color={item.completed ? 'primary' : 'default'} />
+                                        </IconButton>
+                                    </>
+                                }>
+                                    <ListItemText primary={item.text} style={{ textDecoration: item.completed ? 'line-through' : 'none' }} />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </CardContent>
+                </Card>
+                {error && <Snackbar open={true} autoHideDuration={6000} message={error} />}
+            </Container>
         </>
     );
 }
