@@ -10,18 +10,32 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 import Navbar from '../Components/Navbar';
+import LoadingScreen from '../Components/LoadingScreen';
 
 function Todo() {
+
     const [loading, setLoading] = useState(false);
-    const [initialLoad, setInitialLoad] = useState(true); // Track initial loading
+    const [initialLoad, setInitialLoad] = useState(true); 
     const [error, setError] = useState(null);
+
+    const [name, setName] = useState('');
+
     const [todos, setTodos] = useState([]);
     const [todo, setTodo] = useState('');
-    const [filter, setFilter] = useState('all'); // Filter state
+    const [filter, setFilter] = useState('all'); 
 
     useEffect(() => {
         if (auth.currentUser) {
             setLoading(true);
+            const userRef = ref(db, `users/${auth.currentUser.uid}`);
+            get(userRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    setName(snapshot.val().name);
+                }
+            }).catch(error => {
+                setError(error.message);
+                setLoading(false);
+            });
             const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
             get(todosRef).then((snapshot) => {
                 if (snapshot.exists()) {
@@ -42,7 +56,7 @@ function Todo() {
     
 
     const handleAddTodo = async () => {
-        if (!todo.trim()) return; // Prevent adding empty todos
+        if (!todo.trim()) return;
         setLoading(true);
         try {
             const newTodo = { id: uuidv4(), text: todo.trim(), completed: false, createdAt: new Date().toISOString() };
@@ -118,11 +132,17 @@ function Todo() {
         return true;
     });
 
+    if(loading && initialLoad) return <LoadingScreen />;
+
     return (
         <>
             <Navbar />
             <Container sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <Typography variant="h4" gutterBottom>
+                    Welcome, { name ? name : 'Guest'}
+                </Typography> 
                 <Card sx={{ mb: 2, width: '100%', maxWidth: 600, boxShadow: 3 }}>
+
                     <CardContent>
                         <Typography variant="h4" gutterBottom>
                             Add New Todo

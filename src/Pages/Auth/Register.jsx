@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../../config/firebase';
+
+import { auth, db } from '../../config/firebase';
+import { update, ref } from 'firebase/database';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 import {
     Container,
     Typography,
@@ -16,23 +20,31 @@ import {
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
+
 import Navbar from '../../Components/Navbar';
 import LoadingScreen from '../../Components/LoadingScreen';
 
 function Register() {
+
     const navigate = useNavigate();
+
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const register = async (event) => {
-        event.preventDefault(); // Prevent the form from refreshing the page
+        event.preventDefault(); 
         setLoading(true);
         try {
             await createUserWithEmailAndPassword(auth, email, password);
-            navigate('/'); // Navigate to homepage or dashboard after successful registration
+            await update(ref(db, `users/${auth.currentUser.uid}`), {
+                name,
+                email,
+            })
+            navigate('/'); 
         } catch (error) {
             setError(error.message);
             console.error(error);
