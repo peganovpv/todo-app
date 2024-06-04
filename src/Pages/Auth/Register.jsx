@@ -40,7 +40,7 @@ function Register() {
         setLoading(true);
         try {
             await createUserWithEmailAndPassword(auth, email, password);
-            await update(ref(db, `users/${auth.currentUser.uid}`), {
+            await update(ref(db, `${auth.currentUser.uid}`), {
                 name,
                 email,
             })

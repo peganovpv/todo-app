@@ -27,7 +27,7 @@ function Todo() {
     useEffect(() => {
         if (auth.currentUser) {
             setLoading(true);
-            const userRef = ref(db, `users/${auth.currentUser.uid}`);
+            const userRef = ref(db, `${auth.currentUser.uid}`);
             get(userRef).then((snapshot) => {
                 if (snapshot.exists()) {
                     setName(snapshot.val().name);
