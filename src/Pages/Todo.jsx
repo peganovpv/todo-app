@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { auth, db } from '../config/firebase';
-import { get, ref, update } from 'firebase/database';
+import { get, ref, update, set } from 'firebase/database';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,21 +20,26 @@ function Todo() {
     const [filter, setFilter] = useState('all'); // Filter state
 
     useEffect(() => {
-        setLoading(true);
-        const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
-        get(todosRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                setTodos(Object.values(snapshot.val()));
-            } else {
-                setTodos([]);
-            }
-            setLoading(false);
-            setInitialLoad(false);
-        }).catch(error => {
-            setError(error.message);
-            setLoading(false);
-        });
-    }, []);
+        if (auth.currentUser) {
+            setLoading(true);
+            const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
+            get(todosRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    setTodos(Object.values(snapshot.val()));
+                } else {
+                    setTodos([]);
+                }
+                setLoading(false);
+                setInitialLoad(false);
+            }).catch(error => {
+                setError(error.message);
+                setLoading(false);
+            });
+        } else {
+            setTodos([]);
+        }
+    }, [auth.currentUser]);
+    
 
     const handleAddTodo = async () => {
         if (!todo.trim()) return; // Prevent adding empty todos
@@ -59,7 +64,7 @@ function Todo() {
         try {
             const newTodos = todos.filter(todo => todo.id !== id);
             const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
-            await update(todosRef, { ...newTodos });
+            await set(todosRef, { ...newTodos });
             setTodos(newTodos);
         } catch (error) {
             setError(error.message);
@@ -86,27 +91,19 @@ function Todo() {
 
     const handleClearCompleted = async () => {
         setLoading(true);
-        try {
-            const activeTodos = todos.filter(todo => !todo.completed);
-    
-            const updates = {};
-            todos.forEach(todo => {
-                if (todo.completed) {
-                    updates[`${auth.currentUser.uid}/todos/${todo.id}`] = null;
-                }
-            });
-    
-            const todosRef = ref(db);
-            await update(todosRef, updates);
-
-            setTodos(activeTodos);
+        try {            
+            const newTodos = todos.filter(todo => !todo.completed);
+            const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
+            await set(todosRef, { ...newTodos });
+            setTodos(newTodos);
         } catch (error) {
             setError(error.message);
-            console.error(error);
+            console.error("Error clearing completed todos:", error);
         } finally {
             setLoading(false);
         }
     };
+    
     
 
     const handleFilterChange = (event, newFilter) => {
