@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Button, Box, Paper } from '@mui/material';
-import Navbar from '../Components/Navbar';
+
 import { auth } from '../config/firebase';
+
+import { Container, Typography, Button, Box, Paper } from '@mui/material';
+
+import Navbar from '../Components/Navbar';
 
 const Home = () => {
     const user = auth.currentUser;
