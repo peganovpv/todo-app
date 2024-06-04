@@ -13,12 +13,14 @@ import Navbar from '../Components/Navbar';
 
 function Todo() {
     const [loading, setLoading] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true); // Track initial loading
     const [error, setError] = useState(null);
     const [todos, setTodos] = useState([]);
     const [todo, setTodo] = useState('');
     const [filter, setFilter] = useState('all'); // Filter state
 
     useEffect(() => {
+        setLoading(true);
         const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
         get(todosRef).then((snapshot) => {
             if (snapshot.exists()) {
@@ -26,13 +28,19 @@ function Todo() {
             } else {
                 setTodos([]);
             }
+            setLoading(false);
+            setInitialLoad(false);
+        }).catch(error => {
+            setError(error.message);
+            setLoading(false);
         });
     }, []);
 
     const handleAddTodo = async () => {
+        if (!todo.trim()) return; // Prevent adding empty todos
         setLoading(true);
         try {
-            const newTodo = { id: uuidv4(), text: todo, completed: false, createdAt: new Date().toISOString() };
+            const newTodo = { id: uuidv4(), text: todo.trim(), completed: false, createdAt: new Date().toISOString() };
             const newTodos = [...todos, newTodo];
             const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
             await update(todosRef, { ...newTodos });
@@ -79,10 +87,19 @@ function Todo() {
     const handleClearCompleted = async () => {
         setLoading(true);
         try {
-            const newTodos = todos.filter(todo => !todo.completed);
-            const todosRef = ref(db, `${auth.currentUser.uid}/todos`);
-            await update(todosRef, { ...newTodos });
-            setTodos(newTodos);
+            const activeTodos = todos.filter(todo => !todo.completed);
+    
+            const updates = {};
+            todos.forEach(todo => {
+                if (todo.completed) {
+                    updates[`${auth.currentUser.uid}/todos/${todo.id}`] = null;
+                }
+            });
+    
+            const todosRef = ref(db);
+            await update(todosRef, updates);
+
+            setTodos(activeTodos);
         } catch (error) {
             setError(error.message);
             console.error(error);
@@ -90,6 +107,7 @@ function Todo() {
             setLoading(false);
         }
     };
+    
 
     const handleFilterChange = (event, newFilter) => {
         if (newFilter) {
@@ -120,11 +138,12 @@ function Todo() {
                             onChange={e => setTodo(e.target.value)}
                             margin="normal"
                         />
-                        <Button variant="contained" color="primary" onClick={handleAddTodo} disabled={!todo}>
+                        <Button variant="contained" color="primary" onClick={handleAddTodo} disabled={!todo.trim()}>
                             Add Todo
                         </Button>
                     </CardContent>
                 </Card>
+                {loading && initialLoad && <CircularProgress />}
                 <ToggleButtonGroup
                     color="primary"
                     value={filter}
@@ -139,31 +158,32 @@ function Todo() {
                 <Button onClick={handleClearCompleted} color="secondary" variant="outlined">
                     Clear Completed
                 </Button>
-                {loading && <CircularProgress />}
-                <Card sx={{ width: '100%', maxWidth: 600, boxShadow: 3 }}>
-                    <CardContent>
-                        <Typography variant="h4" gutterBottom>
-                            Your Todos
-                        </Typography>
-                        {todos.length === 0 && <Typography variant="body2">No todos found!</Typography>}
-                        <List>
-                            {filteredTodos.map((item) => (
-                                <ListItem key={item.id} secondaryAction={
-                                    <>
-                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteTodo(item.id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                        <IconButton edge="end" aria-label="complete" onClick={() => handleToggleTodo(item.id)}>
-                                            <CheckCircleOutlineIcon color={item.completed ? 'primary' : 'default'} />
-                                        </IconButton>
-                                    </>
-                                }>
-                                    <ListItemText primary={item.text} style={{ textDecoration: item.completed ? 'line-through' : 'none' }} />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </CardContent>
-                </Card>
+                {!loading || !initialLoad ? (
+                    <Card sx={{ width: '100%', maxWidth: 600, boxShadow: 3 }}>
+                        <CardContent>
+                            <Typography variant="h4" gutterBottom>
+                                Your Todos
+                            </Typography>
+                            {todos.length === 0 && <Typography variant="body2">No todos found!</Typography>}
+                            <List>
+                                {filteredTodos.map((item) => (
+                                    <ListItem key={item.id} secondaryAction={
+                                        <>
+                                            <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteTodo(item.id)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                            <IconButton edge="end" aria-label="complete" onClick={() => handleToggleTodo(item.id)}>
+                                                <CheckCircleOutlineIcon color={item.completed ? 'primary' : 'default'} />
+                                            </IconButton>
+                                        </>
+                                    }>
+                                        <ListItemText primary={item.text} style={{ textDecoration: item.completed ? 'line-through' : 'none' }} />
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </CardContent>
+                    </Card>
+                ) : <CircularProgress />}
                 {error && <Snackbar open={true} autoHideDuration={6000} message={error} />}
             </Container>
         </>
